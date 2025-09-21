@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA - Gold Purity Analyzer</title>
+    <link rel="stylesheet" href="styles_enhanced.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Dashboard Screen -->
+    <div id="dashboard" class="screen active">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevel">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="app-title">AURA</h1>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="status-card">
+                <div class="status-item">
+                    <div class="status-indicator connected"></div>
+                    <span class="status-text">Device Connected</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Mode:</span>
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="jewelry" onclick="setTestMode('jewelry')">
+                            <i class="fas fa-gem"></i>
+                            Jewelry
+                        </button>
+                        <button class="mode-btn" data-mode="artefact" onclick="setTestMode('artefact')">
+                            <i class="fas fa-chess-rook"></i>
+                            Artefact
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h2 class="card-title">Gold Purity Analyzer</h2>
+                <p class="card-description">Non-destructive electromagnetic resonance testing</p>
+                <button class="primary-btn" onclick="startTest()">
+                    <i class="fas fa-play"></i>
+                    Start Test
+                </button>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalTests">0</span>
+                    <span class="stat-label">Total Tests</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="avgPurity">0%</span>
+                    <span class="stat-label">Avg Purity</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scanning Screen -->
+    <div id="scanning" class="screen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevelScan">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">Testing in Progress</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="scanning-container">
+                <div class="test-steps">
+                    <div class="step-indicator">
+                        <div class="step active" id="step1">
+                            <div class="step-number">1</div>
+                            <div class="step-label">Initialize</div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" id="step2">
+                            <div class="step-number">2</div>
+                            <div class="step-label">Calibrate</div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" id="step3">
+                            <div class="step-number">3</div>
+                            <div class="step-label">Analyze</div>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step" id="step4">
+                            <div class="step-number">4</div>
+                            <div class="step-label">Complete</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scanning-progress">
+                    <div class="wave-animation">
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                        <div class="wave-line"></div>
+                    </div>
+
+                    <div class="progress-info">
+                        <h3 class="progress-title" id="currentStepTitle">Initializing Device</h3>
+                        <p class="progress-text" id="currentStepText">Preparing electromagnetic resonance scanner...</p>
+
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="scanProgress"></div>
+                        </div>
+
+                        <div class="scan-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Frequency:</span>
+                                <span class="detail-value" id="frequencyValue">--- Hz</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Amplitude:</span>
+                                <span class="detail-value" id="amplitudeValue">--- V</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Q-Factor:</span>
+                                <span class="detail-value" id="qFactorValue">---</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results" class="screen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevelResult">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">Test Results</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="results-container">
+                <div class="purity-result">
+                    <h2 class="purity-text" id="purityResult">22K Gold</h2>
+                    <div class="purity-percentage">
+                        <span class="percentage-number" id="purityPercentage">91.7%</span>
+                        <span class="percentage-label">Purity</span>
+                    </div>
+                </div>
+
+                <div class="confidence-score">
+                    <div class="score-circle">
+                        <span class="score-number" id="confidenceScore">94</span>
+                        <span class="score-label">Confidence</span>
+                    </div>
+                </div>
+
+                <div class="result-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Sample Type:</span>
+                        <span class="detail-value" id="sampleType">Jewelry</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Test Date:</span>
+                        <span class="detail-value" id="testDate">---</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Test ID:</span>
+                        <span class="detail-value" id="testId">---</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Frequency:</span>
+                        <span class="detail-value" id="resultFrequency">--- Hz</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Amplitude:</span>
+                        <span class="detail-value" id="resultAmplitude">--- V</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Q-Factor:</span>
+                        <span class="detail-value" id="resultQFactor">---</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="secondary-btn" onclick="saveResult()">
+                        <i class="fas fa-save"></i>
+                        Save Result
+                    </button>
+                    <button class="primary-btn" onclick="generateCertificate()">
+                        <i class="fas fa-certificate"></i>
+                        Generate Certificate
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Certificate Screen -->
+    <div id="certificate" class="screen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevelCert">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">Digital Certificate</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="certificate-container">
+                <div class="certificate-border">
+                    <div class="certificate-header">
+                        <div class="cert-logo">
+                            <i class="fas fa-gem"></i>
+                            <span>AURA</span>
+                        </div>
+                        <h3 class="cert-title">Gold Purity Certificate</h3>
+                    </div>
+
+                    <div class="cert-content">
+                        <div class="cert-section">
+                            <h4 class="section-title">Test Results</h4>
+                            <div class="cert-detail">
+                                <span class="cert-label">Purity Grade:</span>
+                                <span class="cert-value gold-text" id="certPurity">22K Gold</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Purity Percentage:</span>
+                                <span class="cert-value gold-text" id="certPercentage">91.7%</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Confidence Score:</span>
+                                <span class="cert-value gold-text" id="certConfidence">94%</span>
+                            </div>
+                        </div>
+
+                        <div class="cert-section">
+                            <h4 class="section-title">Test Details</h4>
+                            <div class="cert-detail">
+                                <span class="cert-label">Sample Type:</span>
+                                <span class="cert-value" id="certSampleType">Jewelry</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Test Date:</span>
+                                <span class="cert-value" id="certDate">---</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Certificate ID:</span>
+                                <span class="cert-value" id="certId">AURA-2024-001</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Frequency:</span>
+                                <span class="cert-value" id="certFrequency">--- Hz</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Amplitude:</span>
+                                <span class="cert-value" id="certAmplitude">--- V</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Q-Factor:</span>
+                                <span class="cert-value" id="certQFactor">---</span>
+                            </div>
+                        </div>
+
+                        <div class="cert-section">
+                            <h4 class="section-title">Authentication</h4>
+                            <div class="cert-detail">
+                                <span class="cert-label">Method:</span>
+                                <span class="cert-value">Electromagnetic Resonance Analysis</span>
+                            </div>
+                            <div class="cert-detail">
+                                <span class="cert-label">Verification:</span>
+                                <span class="cert-value">Blockchain Secured</span>
+                            </div>
+                        </div>
+
+                        <div class="qr-section">
+                            <div class="qr-code" id="qrCode">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <p class="qr-text">Scan for verification</p>
+                        </div>
+                    </div>
+
+                    <div class="cert-footer">
+                        <p class="cert-disclaimer">This certificate is digitally signed and blockchain verified</p>
+                    </div>
+                </div>
+
+                <div class="cert-actions">
+                    <button class="secondary-btn" onclick="downloadCertificate()">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                    <button class="secondary-btn" onclick="shareCertificate()">
+                        <i class="fas fa-share"></i>
+                        Share
+                    </button>
+                    <button class="primary-btn" onclick="verifyBlockchain()">
+                        <i class="fas fa-link"></i>
+                        Verify on Blockchain
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Records Screen -->
+    <div id="records" class="screen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevelRecords">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">Test Records</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="records-controls">
+                <button class="secondary-btn" onclick="exportResults()">
+                    <i class="fas fa-download"></i>
+                    Export CSV
+                </button>
+                <div class="filter-controls">
+                    <button class="filter-btn active" data-filter="all" onclick="filterRecords('all')">All</button>
+                    <button class="filter-btn" data-filter="jewelry" onclick="filterRecords('jewelry')">Jewelry</button>
+                    <button class="filter-btn" data-filter="artefact" onclick="filterRecords('artefact')">Artefact</button>
+                </div>
+            </div>
+
+            <div class="records-list" id="recordsList">
+                <!-- Records will be populated here -->
+            </div>
+
+            <div class="no-records" id="noRecords">
+                <i class="fas fa-history"></i>
+                <h3>No Test Records</h3>
+                <p>Start testing to see your results here</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- About Screen -->
+    <div id="about" class="screen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="battery-indicator">
+                        <div class="battery-icon">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <span class="battery-text" id="batteryLevelAbout">87%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">About AURA</h1>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="about-container">
+                <div class="about-section">
+                    <h3 class="section-title">What is AURA?</h3>
+                    <p class="section-text">
+                        AURA is a revolutionary non-destructive gold purity analyzer that uses
+                        electromagnetic resonance technology to determine the purity of gold
+                        samples without causing any damage.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h3 class="section-title">How it Works</h3>
+                    <p class="section-text">
+                        Our advanced electromagnetic resonance method analyzes the unique
+                        frequency response of gold at different purity levels. The device
+                        measures resonance frequency, amplitude, and Q-factor to provide
+                        accurate purity readings.
+                    </p>
+                </div>
+
+                <div class="about-section">
+                    <h3 class="section-title">Key Features</h3>
+                    <ul class="feature-list">
+                        <li>Non-destructive testing</li>
+                        <li>High accuracy results</li>
+                        <li>Digital certificate generation</li>
+                        <li>Blockchain verification</li>
+                        <li>Portable and easy to use</li>
+                    </ul>
+                </div>
+
+                <div class="about-section">
+                    <h3 class="section-title">Support</h3>
+                    <p class="section-text">
+                        For technical support or questions about your device,
+                        please contact our support team.
+                    </p>
+                    <button class="secondary-btn">
+                        <i class="fas fa-envelope"></i>
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Side Menu -->
+    <div id="sideMenu" class="side-menu">
+        <div class="menu-header">
+            <h2 class="menu-title">AURA</h2>
+            <button class="close-menu" onclick="toggleMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <nav class="menu-nav">
+            <a href="#" class="menu-item" onclick="showScreen('dashboard')">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="#" class="menu-item" onclick="showScreen('records')">
+                <i class="fas fa-history"></i>
+                Test Records
+            </a>
+            <a href="#" class="menu-item" onclick="showScreen('about')">
+                <i class="fas fa-info-circle"></i>
+                About & Help
+            </a>
+        </nav>
+    </div>
+
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <script src="script_enhanced.js"></script>
+</body>
+</html>
